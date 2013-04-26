@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
 			
 					public void widthChanged(int penWidth) {
 						// TODO Auto-generated method stub
-						paint.setPenWidth(penWidth*10);
+						paint.setPenWidth(penWidth);
 					}
 				});
 				dialog.show();

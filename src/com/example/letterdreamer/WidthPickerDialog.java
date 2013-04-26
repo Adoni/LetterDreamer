@@ -1,20 +1,26 @@
 package com.example.letterdreamer;
 
 
-import com.example.letterdreamer.ColorPickerDialog.OnColorChangedListener;
-
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 
 public class WidthPickerDialog extends Dialog {
 	private Context context;
 	private OnWidthChangedListener listener;
+	private int penwidth;
+	private SeekBar widthseek;
+	private Button okButton;
+	private TextView widthtext;
+	
 	public WidthPickerDialog(Context context, OnWidthChangedListener listener) {
         super(context);
         this.context = context;
@@ -25,20 +31,38 @@ public class WidthPickerDialog extends Dialog {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		WidthPickerView view=new WidthPickerView(context);
-		setContentView(view);
-	}
-	
-	public class WidthPickerView extends View{
-		public WidthPickerView(Context context)
-		{
-			super(context);
-		}
-		@Override
-		protected void onDraw(Canvas canvas) {
-			// TODO Auto-generated method stub
-			super.onDraw(canvas);
-		}
+		setTitle("笔触宽度");
+		setContentView(R.layout.widthpicker);
+		widthseek=(SeekBar)findViewById(R.id.widthseek);
+		widthtext=(TextView)findViewById(R.id.widthtext);
+		okButton=(Button)findViewById(R.id.okbutton);
+		widthseek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				//Toast.makeText(context, ""+penwidth, Toast.LENGTH_LONG).show();
+			}
+			
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				// TODO Auto-generated method stub
+				penwidth=progress;
+				widthtext.setText(""+penwidth);
+			}
+		});
+		okButton.setOnClickListener(new android.view.View.OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				listener.widthChanged(penwidth);
+				WidthPickerDialog.this.dismiss();
+			}
+		});
 	}
 	
 	public interface OnWidthChangedListener{
@@ -48,10 +72,6 @@ public class WidthPickerDialog extends Dialog {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		listener.widthChanged(12);
 		return super.onTouchEvent(event);
 	}
-	
-	
-	
 }
