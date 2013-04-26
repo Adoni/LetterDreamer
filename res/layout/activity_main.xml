@@ -2,15 +2,112 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
-
-    <TextView
+    
+    <com.example.letterdreamer.PaintView
+        android:id="@+id/paint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
+    <TableLayout 
+        android:layout_alignParentRight="true"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent" >
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        >
+			<Button
+		        android:id="@+id/preview"
+		        android:layout_width="100px"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@+id/background"
+		        android:paddingRight="0px"
+		        android:text="预览" />        
+	    </TableRow>
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        >
+		    <Button
+		        android:id="@+id/background"
+		        android:layout_width="100px"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_alignParentTop="true"
+		        android:paddingRight="0px"
+		        android:text="背景" />	        
+	    </TableRow>
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        >
+			 <Button
+		        android:id="@+id/color"
+		        android:layout_width="100px"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@id/preview"
+		        android:paddingRight="0px"
+		        android:text="颜色" />
+	    </TableRow>
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        >
+			 <Button
+		        android:id="@+id/penstyle"
+		        android:layout_width="100px"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@id/preview"
+		        android:paddingRight="0px"
+		        android:text="笔触" />
+	    </TableRow>
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        >
+			 <Button
+		        android:id="@+id/penwidth"
+		        android:layout_width="100px"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@id/preview"
+		        android:paddingRight="0px"
+		        android:text="粗细" />
+	    </TableRow>
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        >
+			 <Button
+		        android:id="@+id/clear"
+		        android:layout_width="100px"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@id/preview"
+		        android:paddingRight="0px"
+		        android:text="清除" />
+	    </TableRow>
+	    
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        >
+			 <Button
+		        android:id="@+id/snap"
+		        android:layout_width="100px"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@id/clear"
+		        android:paddingRight="0px"
+		        android:text="截屏" />
+	    </TableRow>
+	</TableLayout>
+    
 </RelativeLayout>
