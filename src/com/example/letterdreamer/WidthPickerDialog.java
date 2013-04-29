@@ -16,7 +16,7 @@ import android.widget.TextView;
 public class WidthPickerDialog extends Dialog {
 	private Context context;
 	private OnWidthChangedListener listener;
-	private int penwidth;
+	private int penWidth;
 	private SeekBar widthseek;
 	private Button okButton;
 	private TextView widthtext;
@@ -40,7 +40,7 @@ public class WidthPickerDialog extends Dialog {
 			
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				//Toast.makeText(context, ""+penwidth, Toast.LENGTH_LONG).show();
+				//Toast.makeText(context, ""+penWidth, Toast.LENGTH_LONG).show();
 			}
 			
 			public void onStartTrackingTouch(SeekBar seekBar) {
@@ -51,15 +51,15 @@ public class WidthPickerDialog extends Dialog {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				// TODO Auto-generated method stub
-				penwidth=progress;
-				widthtext.setText(""+penwidth);
+				penWidth=progress;
+				widthtext.setText(""+penWidth);
 			}
 		});
 		okButton.setOnClickListener(new android.view.View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				listener.widthChanged(penwidth);
+				listener.widthChanged(penWidth);
 				WidthPickerDialog.this.dismiss();
 			}
 		});
@@ -73,5 +73,10 @@ public class WidthPickerDialog extends Dialog {
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
 		return super.onTouchEvent(event);
+	}
+	public void setPenWidth(int penWidth)
+	{
+		this.penWidth=penWidth;
+		widthseek.setProgress(penWidth);
 	}
 }

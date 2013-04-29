@@ -1,5 +1,7 @@
 package com.example.letterdreamer;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -9,9 +11,10 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 class PaintView extends View {
-	
+	private OnPaintListener listener;
 	private Bitmap mBitmap;
 	private Canvas mCanvas;
 	private Path mPath;
@@ -22,13 +25,13 @@ class PaintView extends View {
 	private Paint mPaint;
 	private int width;
 	private int height;
+	private Context context;
 	
 	public PaintView(Context c,AttributeSet attrs) {
 		super(c,attrs);
 		penWidth=10;
 		penColor=0xFFFF0000;
 		penStyle=0;
-		
 		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
 		mPaint.setDither(true);
@@ -43,6 +46,7 @@ class PaintView extends View {
 		mCanvas = new Canvas(mBitmap);
 		mPath = new Path();
 		mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+		context=c;
 	}
 	
 	@Override
@@ -61,9 +65,7 @@ class PaintView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(0xFFAAAAAA);
-	
 		canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-	
 		canvas.drawPath(mPath, mPaint);
 	}
 	
@@ -76,6 +78,7 @@ class PaintView extends View {
 		mPath.moveTo(x, y);
 		mX = x;
 		mY = y;
+		listener.paint(x, y,MotionEvent.ACTION_DOWN);
 	}// 移动画笔
 	
 	private void touch_move(float x, float y) {
@@ -85,6 +88,7 @@ class PaintView extends View {
 			mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
 			mX = x;
 			mY = y;
+			listener.paint(x, y,MotionEvent.ACTION_MOVE);
 		}
 	}
 	
@@ -95,6 +99,37 @@ class PaintView extends View {
 		mCanvas.drawPath(mPath, mPaint);
 		// 重设画笔防止重复描绘
 		mPath.reset();
+		listener.paint(mX, mY, MotionEvent.ACTION_UP);
+		//Toast.makeText(context, myPathStore.tempath.lenth, Toast.LENGTH_LONG).show();
+	}
+	
+
+	// 开始画图
+	private void pre_touch_start(float x, float y) {
+		mPath.reset();
+		mPath.moveTo(x, y);
+		mX = x;
+		mY = y;
+	}// 移动画笔
+	
+	private void pre_touch_move(float x, float y) {
+		float dx = Math.abs(x - mX);
+		float dy = Math.abs(y - mY);
+		if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+			mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+			mX = x;
+			mY = y;
+		}
+	}
+	
+	// 画到屏幕
+	private void pre_touch_up() {
+		mPath.lineTo(mX, mY);
+		// 将内容画都屏幕上
+		mCanvas.drawPath(mPath, mPaint);
+		// 重设画笔防止重复描绘
+		mPath.reset();
+		//Toast.makeText(context, myPathStore.tempath.lenth, Toast.LENGTH_LONG).show();
 	}
 	
 	// 对屏幕的触摸时间的响应
@@ -135,6 +170,10 @@ class PaintView extends View {
 	{
 		mPaint.setStrokeWidth(width);
 	}
+	public int getPenWidth()
+	{
+		return (int)mPaint.getStrokeWidth();
+	}
 	public void clean()
 	{
 		mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -144,5 +183,46 @@ class PaintView extends View {
 	public void printScreen()
 	{
 		mCanvas.save();
+	}
+	public interface OnPaintListener{
+		void paint(float x,float y,int action);
+	}
+	public void setOnPaintListener(OnPaintListener listener){
+		this.listener=listener;
+	}
+	public void preview(ArrayList<PathStore.node> temPath)
+	{
+		clean();
+		long time=0;
+		for(int i=0;i<temPath.size();i++)
+		{
+			PathStore.node tempnode=temPath.get(i);
+			float x = tempnode.x;
+			float y = tempnode.y;
+			if(i<temPath.size()-1)
+			{
+				//time=tempnode.time-temPath.get(i+1).time;
+			}
+			switch (tempnode.action) {
+				// 按下事件响应
+				case MotionEvent.ACTION_DOWN:
+				pre_touch_start(x+10, y);
+				invalidate();
+				break;
+				// 移动事件响应
+				case MotionEvent.ACTION_MOVE:
+				pre_touch_move(x+10, y);
+				invalidate();
+				break;
+				// 松开事件响应
+				case MotionEvent.ACTION_UP:
+				pre_touch_up();
+				invalidate();
+				break;
+				
+			}
+			
+		}
+		
 	}
 }

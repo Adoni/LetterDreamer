@@ -1,6 +1,9 @@
 package com.example.letterdreamer;
 
 
+import com.example.letterdreamer.PaintView.OnPaintListener;
+import com.example.letterdreamer.PathStore.node;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,10 +30,14 @@ public class MainActivity extends Activity {
 	private Button backgroud;
 	private Button penWidthPicker;
 	private Button penStylePicker;
+	private Button previewButton;
+	private PathStore myPathStore;//全局变量
+	private long current_time;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		myPathStore=(PathStore) getApplication();
+		current_time=System.currentTimeMillis();
 		// 设置画笔属性
 		//根据参数创建新位图
 		DisplayMetrics dm = new DisplayMetrics();  
@@ -72,6 +79,8 @@ public class MainActivity extends Activity {
 					}
 				});
 				dialog.show();
+
+				dialog.setPenWidth(paint.getPenWidth());
 			}
 		});
 		penStylePicker=(Button)findViewById(R.id.penstyle);
@@ -88,6 +97,18 @@ public class MainActivity extends Activity {
 			}
 		});
 		paint=(PaintView)findViewById(R.id.paint);
+		paint.setOnPaintListener(new OnPaintListener() {
+			
+			public void paint(float x, float y, int action) {
+				// TODO Auto-generated method stub
+				PathStore.node tempnode=myPathStore.new node();
+				tempnode.x=x;
+				tempnode.y=y;
+				tempnode.action=action;
+				tempnode.time=System.currentTimeMillis();
+				myPathStore.addNode(tempnode);
+			}
+		});
 		colorPicker.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -99,6 +120,14 @@ public class MainActivity extends Activity {
 		                    }  
                 		});  
                 dialog.show();
+			}
+		});
+		previewButton=(Button)findViewById(R.id.preview);
+		previewButton.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				paint.preview(myPathStore.getTempPath());
 			}
 		});
 	}
