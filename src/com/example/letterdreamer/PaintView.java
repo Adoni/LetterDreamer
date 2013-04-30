@@ -7,8 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -64,6 +67,7 @@ class PaintView extends View {
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
 		canvas.drawColor(0xFFAAAAAA);
 		canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
 		canvas.drawPath(mPath, mPaint);
@@ -178,7 +182,16 @@ class PaintView extends View {
 	{
 		mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 		mCanvas.setBitmap(mBitmap);
-		invalidate();
+		try {
+			Message msg=new Message();
+			msg.obj=PaintView.this;
+			handler.sendMessage(msg);
+			Thread.sleep(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	public void printScreen()
 	{
@@ -192,36 +205,69 @@ class PaintView extends View {
 	}
 	public void preview(ArrayList<PathStore.node> temPath)
 	{
-		clean();
-		long time=0;
-		for(int i=0;i<temPath.size();i++)
+		
+		PreviewThread previewThread=new PreviewThread(this, temPath);
+		Thread thread=new Thread(previewThread);
+		thread.start();
+	}
+	private Handler handler=new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			((View)msg.obj).invalidate();
+			super.handleMessage(msg);
+		}
+		
+	};
+	class PreviewThread implements Runnable{
+		private long time;
+		private ArrayList<PathStore.node> temPath;
+		private View view;
+		public PreviewThread(View view, ArrayList<PathStore.node> temPath)
 		{
-			PathStore.node tempnode=temPath.get(i);
-			float x = tempnode.x;
-			float y = tempnode.y;
-			if(i<temPath.size()-1)
+			this.view=view;
+			this.temPath=temPath;
+		}
+		public void run() {
+			// TODO Auto-generated method stub
+			time=0;
+			clean();
+			for(int i=0;i<temPath.size();i++)
 			{
-				//time=tempnode.time-temPath.get(i+1).time;
-			}
-			switch (tempnode.action) {
-				// 按下事件响应
-				case MotionEvent.ACTION_DOWN:
-				pre_touch_start(x+10, y);
-				invalidate();
-				break;
-				// 移动事件响应
-				case MotionEvent.ACTION_MOVE:
-				pre_touch_move(x+10, y);
-				invalidate();
-				break;
-				// 松开事件响应
-				case MotionEvent.ACTION_UP:
-				pre_touch_up();
-				invalidate();
-				break;
+				PathStore.node tempnode=temPath.get(i);
+				float x = tempnode.x;
+				float y = tempnode.y;
+				if(i<temPath.size()-1)
+				{
+					time=temPath.get(i+1).time-tempnode.time;
+				}
+				switch (tempnode.action) {
+					// 按下事件响应
+					case MotionEvent.ACTION_DOWN:
+					pre_touch_start(x+10, y);
+					break;
+					// 移动事件响应
+					case MotionEvent.ACTION_MOVE:
+					pre_touch_move(x+10, y);
+					break;
+					// 松开事件响应
+					case MotionEvent.ACTION_UP:
+					pre_touch_up();
+					break;
+				}
+				Log.v("mylog", i+"");
 				
+				try {
+					Message msg=new Message();
+					msg.obj=view;
+					handler.sendMessage(msg);
+					Thread.sleep(time);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			
 		}
 		
 	}

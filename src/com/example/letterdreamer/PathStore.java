@@ -33,4 +33,8 @@ public class PathStore extends Application{
 	public void addNode(node tempnode){
 		tempath.add(tempnode);
 	}
+	public void cleanStore()
+	{
+		tempath.clear();
+	}
 }

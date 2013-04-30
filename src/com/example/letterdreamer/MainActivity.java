@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				paint.clean();
+				myPathStore.cleanStore();
 			}
 		});
 		colorPicker=(Button)findViewById(R.id.color);
